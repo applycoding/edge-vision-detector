@@ -1,0 +1,56 @@
+# Paths are relative to the working directory. Run commands from the repo root.
+# This file is a demo config: zone coordinates are an example for a 640x480 frame,
+# not a calibrated camera.
+
+source:
+  kind: file
+  path: samples/synthetic.mp4
+
+model:
+  path: models/yolov8n.onnx
+  input_size: [640, 640] # height, width; must match the exported ONNX input
+  conf_threshold: 0.25
+  iou_threshold: 0.45
+  layout: auto # auto, yolov8, yolov5, or end2end
+  max_detections: 100
+  # Preference order. Providers that are not installed are skipped.
+  # CPU is appended when the runtime has it and it was not listed.
+  # Jetson example:
+  #   - TensorrtExecutionProvider
+  #   - CUDAExecutionProvider
+  providers:
+    - CPUExecutionProvider
+
+tracker:
+  iou_threshold: 0.30
+  max_age: 30
+  min_hits: 3
+
+zones:
+  - name: doorway
+    # Foot point (bottom-center of the box) is tested against this polygon.
+    polygon:
+      - [200, 60]
+      - [460, 60]
+      - [460, 420]
+      - [200, 420]
+    classes:
+      - person
+
+publish:
+  mode: none # none, http, or mqtt
+  http:
+    url: http://127.0.0.1:8080/events
+    timeout_s: 2.0
+  mqtt:
+    host: 127.0.0.1
+    port: 1883
+    topic: edge/alerts
+    qos: 0
+
+output:
+  annotated_path: output/annotated.mp4
+  show: false
+  metrics_every: 30
+
+max_frames: null

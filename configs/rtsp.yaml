@@ -1,0 +1,30 @@
+source:
+  kind: rtsp
+  url: rtsp://127.0.0.1:8554/stream
+
+model:
+  path: models/yolov8n.onnx
+  input_size: [640, 640]
+  providers:
+    - CPUExecutionProvider
+
+zones:
+  - name: doorway
+    polygon:
+      - [200, 60]
+      - [460, 60]
+      - [460, 420]
+      - [200, 420]
+    classes:
+      - person
+
+publish:
+  mode: mqtt
+  mqtt:
+    host: 127.0.0.1
+    port: 1883
+    topic: edge/alerts
+
+output:
+  annotated_path: output/rtsp.mp4
+  show: false
