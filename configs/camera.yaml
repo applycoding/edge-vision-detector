@@ -1,0 +1,23 @@
+source:
+  kind: camera
+  device: 0
+
+model:
+  path: models/yolov8n.onnx
+  input_size: [640, 640]
+  providers:
+    - CPUExecutionProvider
+
+zones:
+  - name: doorway
+    polygon:
+      - [200, 60]
+      - [460, 60]
+      - [460, 420]
+      - [200, 420]
+    classes:
+      - person
+
+output:
+  annotated_path: output/camera.mp4
+  show: false
